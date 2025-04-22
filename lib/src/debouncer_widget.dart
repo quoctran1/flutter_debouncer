@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tap_debouncer/src/debouncer_handler.dart';
 
@@ -48,46 +49,49 @@ class _TapDebouncerState extends State<TapDebouncer> {
   }
 
   @override
-  Widget build(BuildContext context) => StreamBuilder<bool>(
-        initialData: false,
-        stream: _tapDebouncerHandler.busyStream,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (snapshot.hasError) {
-            throw StateError(
-              '_tapDebouncerHandler.busy has error=${snapshot.error}',
-            );
-          }
+  Widget build(BuildContext context) => Container(
+        color: Colors.green,
+        child: StreamBuilder<bool>(
+          initialData: false,
+          stream: _tapDebouncerHandler.busyStream,
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasError) {
+              throw StateError(
+                '_tapDebouncerHandler.busy has error=${snapshot.error}',
+              );
+            }
 
-          final isBusy = snapshot.data!;
+            final isBusy = snapshot.data!;
 
-          if (!isBusy) {
-            final onTap = widget.onTap;
+            if (!isBusy) {
+              final onTap = widget.onTap;
 
-            return widget.builder(
-              context,
-              onTap == null
-                  ? null
-                  : () async => _tapDebouncerHandler.onTap(
-                        () async {
-                          await onTap();
+              return widget.builder(
+                context,
+                onTap == null
+                    ? null
+                    : () async => _tapDebouncerHandler.onTap(
+                          () async {
+                            await onTap();
 
-                          final cooldown = widget.cooldown;
+                            final cooldown = widget.cooldown;
 
-                          if (cooldown != null) {
-                            await Future<void>.delayed(cooldown);
-                          }
-                        },
-                      ),
-            );
-          }
+                            if (cooldown != null) {
+                              await Future<void>.delayed(cooldown);
+                            }
+                          },
+                        ),
+              );
+            }
 
-          final disabledChild = widget.builder(context, null);
+            final disabledChild = widget.builder(context, null);
 
-          if (widget.waitBuilder == null) {
-            return disabledChild;
-          } else {
-            return widget.waitBuilder!(context, disabledChild);
-          }
-        },
+            if (widget.waitBuilder == null) {
+              return disabledChild;
+            } else {
+              return widget.waitBuilder!(context, disabledChild);
+            }
+          },
+        ),
       );
 }
