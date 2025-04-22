@@ -50,7 +50,7 @@ class _TapDebouncerState extends State<TapDebouncer> {
 
   @override
   Widget build(BuildContext context) => Container(
-        color: Colors.green,
+        color: Colors.blue,
         child: StreamBuilder<bool>(
           initialData: false,
           stream: _tapDebouncerHandler.busyStream,
